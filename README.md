@@ -56,7 +56,6 @@ Of course you must change `$DSTIP` and `$DSTPORT` for your environment.
 -A TOR_RATELIMIT -m recent --update --seconds 60 --name tor-recent --mask 255.255.255.255 --rsource -j DROP
 -A TOR_RATELIMIT -m hashlimit --hashlimit-upto 7/sec --hashlimit-burst 5 --hashlimit-mode srcip --hashlimit-name tor-hashlimit -j RETURN
 -A TOR_RATELIMIT -m recent --set --name tor-recent --mask 255.255.255.255 --rsource
--A TOR_RATELIMIT -j LOG --log-prefix "Tor: "
 -A TOR_RATELIMIT -j DROP
 COMMIT
 # Completed on Mon Oct 31 14:00:34 2022
@@ -71,7 +70,6 @@ proto tcp destination ($DSTIPs) dport $DSTPORT mod state state NEW @subchain TOR
     mod recent name tor-recent seconds 60 update DROP;
     mod hashlimit hashlimit-name tor-hashlimit hashlimit-mode srcip hashlimit 7/sec RETURN;
     mod recent name tor-recent set NOP;
-    LOG log-prefix "Tor: ";
     DROP;
 }
 ```

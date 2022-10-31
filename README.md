@@ -77,4 +77,7 @@ proto tcp destination ($DSTIPs) dport $DSTPORTs mod state state NEW @subchain TO
 }
 ```
 
+## Why another attempt at this?
+Because I feel it's easier to implement into ones existing firewall workflow and isn't dependent on `ipset` and wrapper scripts. Don't get me wrong though, I don't want to diminish the great work done by both @toralf and @Enkidu-6.
+
 HTH, and thanks for reading. :-)

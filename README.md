@@ -69,9 +69,9 @@ COMMIT
 ## Rules written in ferm
 Since I use ferm as my firewall frontend tool, this may help you if you are a ferm user aswell. I show only the really relevant parts here:
 ```
-proto tcp destination ($DSTIP) dport $DSTPORT source ($dirauths $snowflakes) ACCEPT;
+proto tcp destination $DSTIP dport $DSTPORT source ($dirauths $snowflakes) ACCEPT;
 
-proto tcp destination ($DSTIP) dport $DSTPORT mod state state NEW @subchain TOR_RATELIMIT {
+proto tcp destination $DSTIP dport $DSTPORT mod state state NEW @subchain TOR_RATELIMIT {
     mod recent name tor-recent seconds 60 update DROP;
     mod hashlimit hashlimit-name tor-hashlimit hashlimit-mode srcip hashlimit 7/sec RETURN;
     mod recent name tor-recent set NOP;

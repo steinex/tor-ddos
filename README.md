@@ -3,6 +3,11 @@ This is my el cheapo attempt to block unwanted traffic to relays and (hopefully)
 ## How does it work?
 The rules shown here make use of a mix of the `recent` and `hashlimit` iptables modules. Should an attacker hit 7 SYNs/sec on the ORPort the IP is blocked for 60 seconds. Should another SYN attempt arrive in that timeframe the timer is reset and the IP stays blocked for another 60 seconds.
 
+## How well does it work?
+Very well in my observations. Before the rules were in place I had many of the infamous "Your computer is too slow to handle this many circuit creation requests" in my log. After both my relays lost their `Stable`, `Guard` and `HSDir` flags I finally decided to do something against it (and you should too if you are a relay operator).
+
+Since the rules are active, directory authorities are happy again and my relays have their flags back. The infamous log message is gone. Additionally the behaviour of the tor processes are back to pre-DDoS times, both in terms of traffic and on strain on CPU and memory.
+
 ## Credits
 * Thanks to the friendly peeps from `#netfilter` on libera for helping me wrap my head around these iptables modules.
 * @toralf has a more sophisticated solution here: https://github.com/toralf/torutils

@@ -55,7 +55,7 @@ iptables -N TOR_RATELIMIT
 iptables -I INPUT -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -m state --state NEW -j TOR_RATELIMIT
 iptables -I INPUT -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
 iptables -I OUTPUT -j ACCEPT
-iptables -I TOR_RATELIMIT -m connlimit --connlimit-above 4 --connlimit-mask 32 --connlimit-saddr -j DROP
+iptables -I TOR_RATELIMIT -m connlimit --connlimit-above 5 --connlimit-mask 32 --connlimit-saddr -j DROP
 iptables -I TOR_RATELIMIT -m recent --update --seconds 60 --name tor-recent --mask 255.255.255.255 --rsource -j DROP
 iptables -I TOR_RATELIMIT -m hashlimit --hashlimit-upto 7/sec --hashlimit-burst 5 --hashlimit-mode srcip --hashlimit-name tor-hashlimit -j RETURN
 iptables -I TOR_RATELIMIT -m recent --set --name tor-recent --mask 255.255.255.255 --rsource

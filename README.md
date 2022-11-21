@@ -3,7 +3,7 @@ This is my el cheapo attempt to block unwanted traffic to relays and (hopefully)
 ## How does it work?
 The rules shown here make use of a mix of the `recent` and `hashlimit` iptables modules. Should an attacker hit 7 SYNs in one second on the ORPort the IP is blocked for 60 seconds. Should another SYN attempt arrive in that timeframe the timer is reset and the IP stays blocked for another 60 seconds.
 
-In addition to that, there are no more than 4 connections allowed per source ip to the Tor port.
+In addition to that, there are no more than 5 connections allowed per source ip to the Tor port.
 
 ## How well does it work?
 Very well in my observations. Before the rules were in place I had many of the infamous "Your computer is too slow to handle this many circuit creation requests" in my log. After both my relays lost their `Stable`, `Guard` and `HSDir` flags I finally decided to do something against it (and you should too if you are a relay operator).
@@ -68,7 +68,7 @@ Since I use ferm as my firewall frontend tool, this may help you if you are a fe
 proto tcp destination $DSTIP dport $DSTPORT source ($dirauths $snowflakes) ACCEPT;
 
 proto tcp destination $DSTIP dport $DSTPORT mod state state NEW @subchain TOR_RATELIMIT {
-    mod connlimit connlimit-mask 32 connlimit-above 4 DROP;
+    mod connlimit connlimit-mask 32 connlimit-above 5 DROP;
     mod recent name tor-recent seconds 60 update DROP;
     mod hashlimit hashlimit-name tor-hashlimit hashlimit-mode srcip hashlimit 7/sec RETURN;
     mod recent name tor-recent set NOP;

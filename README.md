@@ -51,9 +51,9 @@ iptables -I INPUT -s 45.66.33.45/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT 
 iptables -I INPUT -s 66.111.2.131/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
 iptables -I INPUT -s 86.59.21.38/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
 iptables -I INPUT -s 193.187.88.42/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
-iptables -I INPUT -p tcp -m tcp --dport 45531 --tcp-flags FIN,SYN,RST,ACK SYN -m connlimit --connlimit-above 5 --connlimit-mask 32 --connlimit-saddr -m state --state NEW -j DROP
+iptables -I INPUT -p tcp -m tcp --dport $DSTPORT --tcp-flags FIN,SYN,RST,ACK SYN -m connlimit --connlimit-above 5 --connlimit-mask 32 --connlimit-saddr -m state --state NEW -j DROP
 iptables -N TOR_RATELIMIT
-iptables -I INPUT -p tcp -m tcp --dport 45531 --tcp-flags FIN,SYN,RST,ACK SYN -m state --state NEW -j TOR_RATELIMIT
+iptables -I INPUT -p tcp -m tcp --dport $DSTPORT --tcp-flags FIN,SYN,RST,ACK SYN -m state --state NEW -j TOR_RATELIMIT
 iptables -I INPUT -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
 iptables -I OUTPUT -j ACCEPT
 iptables -I TOR_RATELIMIT -m recent --update --seconds 45 --name tor-recent --mask 255.255.255.255 --rsource -j DROP
@@ -69,7 +69,7 @@ Since I use ferm as my firewall frontend tool, this may help you if you are a fe
 proto tcp destination $DSTIP dport $DSTPORT source ($dirauths $snowflakes) ACCEPT;
 
 # connlimit
-proto tcp dport 45531 syn mod connlimit mod state state NEW connlimit-mask 32 connlimit-above 5 DROP;
+proto tcp dport $DSTPORT syn mod connlimit mod state state NEW connlimit-mask 32 connlimit-above 5 DROP;
 
 # ratelimit
 proto tcp destination $DSTIP dport $DSTPORT syn mod state state NEW @subchain TOR_RATELIMIT {

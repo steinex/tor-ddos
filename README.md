@@ -65,6 +65,7 @@ iptables -I TOR_RATELIMIT -j DROP
 ## Rules written in ferm
 Since I use ferm as my firewall frontend tool, this may help you if you are a ferm user aswell. I show only the most relevant parts here and I assume you have other rules like accepting `RELATED/ESTABLISHED` and allowing icmp already in place before this snippet:
 ```
+# never limit dirauths or snowflakes
 proto tcp destination $DSTIP dport $DSTPORT source ($dirauths $snowflakes) ACCEPT;
 
 # connlimit

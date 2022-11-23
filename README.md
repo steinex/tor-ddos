@@ -1,9 +1,9 @@
 This is my el cheapo attempt to block unwanted traffic to relays and (hopefully) help against the ongoing Tor DDoS attacks.
 
 ## How does it work?
-The rules shown here make use of a mix of the `recent` and `hashlimit` iptables modules. Should an attacker hit 7 SYNs in one second on the ORPort the IP is blocked for 60 seconds. Should another SYN attempt arrive in that timeframe the timer is reset and the IP stays blocked for another 60 seconds.
+The rules shown here make use of a mix of the `recent` and `hashlimit` iptables modules. Should an attacker hit 7 SYNs in one second on the ORPort the IP is blocked for 45 seconds. Should another SYN attempt arrive in that timeframe the timer is reset and the IP stays blocked for another 60 seconds.
 
-In addition to that, there are no more than 5 connections allowed per source ip to the Tor port.
+In addition to that, there are no more SYNs allowed if 5 connections are already in use to the ORPort.
 
 ## How well does it work?
 Very well in my observations. Before the rules were in place I had many of the infamous "Your computer is too slow to handle this many circuit creation requests" in my log. After both my relays lost their `Stable`, `Guard` and `HSDir` flags I finally decided to do something against it (and you should too if you are a relay operator).
@@ -51,12 +51,12 @@ iptables -I INPUT -s 45.66.33.45/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT 
 iptables -I INPUT -s 66.111.2.131/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
 iptables -I INPUT -s 86.59.21.38/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
 iptables -I INPUT -s 193.187.88.42/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
+iptables -I INPUT -p tcp -m tcp --dport 45531 --tcp-flags FIN,SYN,RST,ACK SYN -m connlimit --connlimit-above 5 --connlimit-mask 32 --connlimit-saddr -m state --state NEW -j DROP
 iptables -N TOR_RATELIMIT
-iptables -I INPUT -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -m state --state NEW -j TOR_RATELIMIT
+iptables -I INPUT -p tcp -m tcp --dport 45531 --tcp-flags FIN,SYN,RST,ACK SYN -m state --state NEW -j TOR_RATELIMIT
 iptables -I INPUT -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
 iptables -I OUTPUT -j ACCEPT
-iptables -I TOR_RATELIMIT -m connlimit --connlimit-above 5 --connlimit-mask 32 --connlimit-saddr -j DROP
-iptables -I TOR_RATELIMIT -m recent --update --seconds 60 --name tor-recent --mask 255.255.255.255 --rsource -j DROP
+iptables -I TOR_RATELIMIT -m recent --update --seconds 45 --name tor-recent --mask 255.255.255.255 --rsource -j DROP
 iptables -I TOR_RATELIMIT -m hashlimit --hashlimit-upto 7/sec --hashlimit-burst 5 --hashlimit-mode srcip --hashlimit-name tor-hashlimit -j RETURN
 iptables -I TOR_RATELIMIT -m recent --set --name tor-recent --mask 255.255.255.255 --rsource
 iptables -I TOR_RATELIMIT -j DROP
@@ -67,9 +67,12 @@ Since I use ferm as my firewall frontend tool, this may help you if you are a fe
 ```
 proto tcp destination $DSTIP dport $DSTPORT source ($dirauths $snowflakes) ACCEPT;
 
-proto tcp destination $DSTIP dport $DSTPORT mod state state NEW @subchain TOR_RATELIMIT {
-    mod connlimit connlimit-mask 32 connlimit-above 5 DROP;
-    mod recent name tor-recent seconds 60 update DROP;
+# connlimit
+proto tcp dport 45531 syn mod connlimit mod state state NEW connlimit-mask 32 connlimit-above 5 DROP;
+
+# ratelimit
+proto tcp destination $DSTIP dport $DSTPORT syn mod state state NEW @subchain TOR_RATELIMIT {
+    mod recent name tor-recent seconds 45 update DROP;
     mod hashlimit hashlimit-name tor-hashlimit hashlimit-mode srcip hashlimit 7/sec RETURN;
     mod recent name tor-recent set NOP;
     DROP;

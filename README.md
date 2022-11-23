@@ -1,7 +1,7 @@
 This is my el cheapo attempt to block unwanted traffic to relays and (hopefully) help against the ongoing Tor DDoS attacks.
 
 ## How does it work?
-The rules shown here make use of a mix of the `recent` and `hashlimit` iptables modules. Should an attacker hit 7 SYNs in one second on the ORPort the IP is blocked for 45 seconds. Should another SYN attempt arrive in that timeframe the timer is reset and the IP stays blocked for another 60 seconds.
+The rules shown here make use of a mix of the `recent` and `hashlimit` iptables modules. Should an attacker hit 7 SYNs in one second on the ORPort the IP is blocked for 45 seconds. Should another SYN attempt arrive in that timeframe the timer is reset and the IP stays blocked for another 45 seconds.
 
 In addition to that, there are no more SYNs allowed if 5 connections are already in use to the ORPort.
 

@@ -36,30 +36,30 @@ This are the actual iptables rules, trimmed down to only the most relevant parts
 Of course you must change `$DSTIP` and `$DSTPORT` for your environment.
 
 ```
-iptables -I INPUT -m state --state INVALID -j DROP
-iptables -I INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
-iptables -I INPUT -i lo -j ACCEPT
-iptables -I INPUT -p icmp -j ACCEPT
-iptables -I INPUT -s 128.31.0.34/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
-iptables -I INPUT -s 131.188.40.189/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
-iptables -I INPUT -s 154.35.175.225/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
-iptables -I INPUT -s 171.25.193.9/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
-iptables -I INPUT -s 193.23.244.244/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
-iptables -I INPUT -s 199.58.81.140/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
-iptables -I INPUT -s 204.13.164.118/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
-iptables -I INPUT -s 45.66.33.45/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
-iptables -I INPUT -s 66.111.2.131/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
-iptables -I INPUT -s 86.59.21.38/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
-iptables -I INPUT -s 193.187.88.42/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
-iptables -I INPUT -p tcp -m tcp --dport $DSTPORT --tcp-flags FIN,SYN,RST,ACK SYN -m connlimit --connlimit-above 5 --connlimit-mask 32 --connlimit-saddr -m state --state NEW -j DROP
+iptables -A INPUT -m state --state INVALID -j DROP
+iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A INPUT -p icmp -j ACCEPT
+iptables -A INPUT -s 128.31.0.34/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
+iptables -A INPUT -s 131.188.40.189/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
+iptables -A INPUT -s 154.35.175.225/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
+iptables -A INPUT -s 171.25.193.9/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
+iptables -A INPUT -s 193.23.244.244/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
+iptables -A INPUT -s 199.58.81.140/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
+iptables -A INPUT -s 204.13.164.118/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
+iptables -A INPUT -s 45.66.33.45/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
+iptables -A INPUT -s 66.111.2.131/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
+iptables -A INPUT -s 86.59.21.38/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
+iptables -A INPUT -s 193.187.88.42/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport $DSTPORT --tcp-flags FIN,SYN,RST,ACK SYN -m connlimit --connlimit-above 5 --connlimit-mask 32 --connlimit-saddr -m state --state NEW -j DROP
 iptables -N TOR_RATELIMIT
-iptables -I INPUT -p tcp -m tcp --dport $DSTPORT --tcp-flags FIN,SYN,RST,ACK SYN -m state --state NEW -j TOR_RATELIMIT
-iptables -I INPUT -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
-iptables -I OUTPUT -j ACCEPT
-iptables -I TOR_RATELIMIT -m recent --update --seconds 45 --name tor-recent --mask 255.255.255.255 --rsource -j DROP
-iptables -I TOR_RATELIMIT -m hashlimit --hashlimit-upto 7/sec --hashlimit-burst 5 --hashlimit-mode srcip --hashlimit-name tor-hashlimit -j RETURN
-iptables -I TOR_RATELIMIT -m recent --set --name tor-recent --mask 255.255.255.255 --rsource
-iptables -I TOR_RATELIMIT -j DROP
+iptables -A INPUT -p tcp -m tcp --dport $DSTPORT --tcp-flags FIN,SYN,RST,ACK SYN -m state --state NEW -j TOR_RATELIMIT
+iptables -A INPUT -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
+iptables -A OUTPUT -j ACCEPT
+iptables -A TOR_RATELIMIT -m recent --update --seconds 45 --name tor-recent --mask 255.255.255.255 --rsource -j DROP
+iptables -A TOR_RATELIMIT -m hashlimit --hashlimit-upto 7/sec --hashlimit-burst 5 --hashlimit-mode srcip --hashlimit-name tor-hashlimit -j RETURN
+iptables -A TOR_RATELIMIT -m recent --set --name tor-recent --mask 255.255.255.255 --rsource
+iptables -A TOR_RATELIMIT -j DROP
 ```
 
 ## Rules written in ferm

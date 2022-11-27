@@ -5,10 +5,22 @@ The rules shown here make use of a mix of the `recent` and `hashlimit` iptables 
 
 In addition to that, there are no more SYNs allowed if 5 connections are already in use to the ORPort.
 
+Newly added are some sysctl tweaks. See below.
+
 ## How well does it work?
 Very well in my observations. Before the rules were in place I had many of the infamous "Your computer is too slow to handle this many circuit creation requests" in my log. After both my relays lost their `Stable`, `Guard` and `HSDir` flags I finally decided to do something against it (and you should too if you are a relay operator).
 
 Since the rules are active, directory authorities are happy again and my relays have their flags back. The infamous log message is gone. Additionally the behaviour of the tor processes are back to pre-DDoS times, both in terms of traffic and on strain on CPU and memory.
+
+## sysctl tweaks
+I noticed over the course of the last weeks that sometimes my ORPort is unresponsive despite not hitting it's filedescriptor limit nor full conntrack table or such. The problem is that the floods come in such fast waves sometimes that The Linux kernel can't keep up with it queue to allow for new connections. This is mitigated by setting:
+
+```
+sysctl -w net.ipv4.tcp_max_syn_backlog=65536
+sysctl -w net.core.somaxconn=65536
+```
+
+Make sure you persist these via `/etc/sysctl.conf` or how it's supposed to do on your distribution.
 
 ## Credits
 * Thanks to the friendly peeps from `#netfilter` on libera for helping me wrap my head around these iptables modules.

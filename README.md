@@ -12,6 +12,11 @@ Very well in my observations. Before the rules were in place I had many of the i
 
 Since the rules are active, directory authorities are happy again and my relays have their flags back. The infamous log message is gone. Additionally the behaviour of the tor processes are back to pre-DDoS times, both in terms of traffic and on strain on CPU and memory.
 
+## Credits
+* Thanks to the friendly peeps from `#netfilter` on libera for helping me wrap my head around these iptables modules.
+* @toralf has a more sophisticated solution here: https://github.com/toralf/torutils
+* @Enkidu-6 has another approach here: https://github.com/Enkidu-6/tor-ddos
+
 ## sysctl tweaks
 Sometimes the ORPort gets unresponsive despite not hitting it's file descriptor limit nor a full conntrack table or such. The problem is that the floods come in such fast waves sometimes that the Linux kernel can't keep up with it queue to allow for new connections. This is mitigated by setting:
 
@@ -21,11 +26,6 @@ sysctl -w net.core.somaxconn=65536
 ```
 
 Make sure you persist these via `/etc/sysctl.conf` or how it's supposed to do on your distribution.
-
-## Credits
-* Thanks to the friendly peeps from `#netfilter` on libera for helping me wrap my head around these iptables modules.
-* @toralf has a more sophisticated solution here: https://github.com/toralf/torutils
-* @Enkidu-6 has another approach here: https://github.com/Enkidu-6/tor-ddos
 
 ## Whitelisting the directory authorities and snowflakes.
 This is shamelessly stolen from @toralf. Since we always want to allow directory authorities and snowflakes to be able to talk to our relay we always `ACCEPT` them before attempting to ratelimit. To get the addresses of these you can use the following commands. The addresses should very rarely change, if ever. You see these addresses used beneath in the actual ruleset.

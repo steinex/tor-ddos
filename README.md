@@ -5,7 +5,7 @@ The rules shown here make use of a mix of the `recent` and `hashlimit` iptables 
 
 In addition to that, there are no more SYNs allowed if 5 connections are already in use to the ORPort.
 
-Newly added are some sysctl tweaks. See below.
+Moreover there are some sysctl tweaks below I strongly recommend.
 
 ## How well does it work?
 Very well in my observations. Before the rules were in place I had many of the infamous "Your computer is too slow to handle this many circuit creation requests" in my log. After both my relays lost their `Stable`, `Guard` and `HSDir` flags I finally decided to do something against it (and you should too if you are a relay operator).

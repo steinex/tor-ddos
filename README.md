@@ -43,7 +43,7 @@ $ curl -s 'https://onionoo.torproject.org/summary?search=flag:authority' -o - | 
 ```
 
 ## The actual rules
-This are the actual iptables rules, trimmed down to only the most relevant parts. I left out ip6tables for an exercise to the reader since it's basically the same.
+These are the actual iptables rules, trimmed down to only the most relevant parts. I left out ip6tables for an exercise to the reader since it's basically the same.
 
 Of course you must change `$DSTIP` and `$DSTPORT` for your environment.
 

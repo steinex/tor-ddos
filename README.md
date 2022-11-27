@@ -25,7 +25,7 @@ sysctl -w net.ipv4.tcp_max_syn_backlog=65536
 sysctl -w net.core.somaxconn=65536
 ```
 
-Make sure you persist these via `/etc/sysctl.conf` or how it's supposed to do on your distribution.
+Make sure you persist these via `/etc/sysctl.conf` or how it's supposed to work on your distribution.
 
 ## Whitelisting the directory authorities and snowflakes.
 Since we always want to allow directory authorities and snowflakes to be able to talk to our relay we always `ACCEPT` them before attempting to ratelimit. To get the addresses of these you can use the following commands. The addresses should very rarely change, if ever. You see these addresses used beneath in the actual ruleset. (commands shamelessly stolen from @toralf.)

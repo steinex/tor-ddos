@@ -13,7 +13,7 @@ Very well in my observations. Before the rules were in place I had many of the i
 Since the rules are active, directory authorities are happy again and my relays have their flags back. The infamous log message is gone. Additionally the behaviour of the tor processes are back to pre-DDoS times, both in terms of traffic and on strain on CPU and memory.
 
 ## sysctl tweaks
-Sometimes the ORPort gets unresponsive despite not hitting it's file descriptor limit nor a full conntrack table or such. The problem is that the floods come in such fast waves sometimes that The Linux kernel can't keep up with it queue to allow for new connections. This is mitigated by setting:
+Sometimes the ORPort gets unresponsive despite not hitting it's file descriptor limit nor a full conntrack table or such. The problem is that the floods come in such fast waves sometimes that the Linux kernel can't keep up with it queue to allow for new connections. This is mitigated by setting:
 
 ```
 sysctl -w net.ipv4.tcp_max_syn_backlog=65536

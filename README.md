@@ -1,7 +1,7 @@
 This is my attempt to block unwanted traffic to relays and (hopefully) help against the ongoing Tor DDoS attacks.
 
 ## How does it work?
-The rules shown here make use of a mix of the `recent` and `hashlimit` iptables modules. Should an attacker hit 7 SYNs in one second on the ORPort the IP is blocked for 90 seconds. Should another SYN attempt arrive in that timeframe the timer is reset and the IP stays blocked for another 90 seconds.
+The rules shown here make use of a mix of the `recent` and `hashlimit` iptables modules. Should an attacker hit 7 SYNs in one second on the ORPort the IP is blocked for 300 seconds. Should another SYN attempt arrive in that timeframe the timer is reset and the IP stays blocked for another 300 seconds.
 
 In addition to that, there are no more SYNs allowed if 4 connections are already in use to the ORPort.
 
@@ -68,7 +68,7 @@ iptables -N TOR_RATELIMIT
 iptables -A INPUT -p tcp -m tcp --dport $DSTPORT --tcp-flags FIN,SYN,RST,ACK SYN -m state --state NEW -j TOR_RATELIMIT
 iptables -A INPUT -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
 iptables -A OUTPUT -j ACCEPT
-iptables -A TOR_RATELIMIT -m recent --update --seconds 90 --name tor-recent --mask 255.255.255.255 --rsource -j DROP
+iptables -A TOR_RATELIMIT -m recent --update --seconds 300 --name tor-recent --mask 255.255.255.255 --rsource -j DROP
 iptables -A TOR_RATELIMIT -m hashlimit --hashlimit-upto 7/sec --hashlimit-burst 5 --hashlimit-mode srcip --hashlimit-name tor-hashlimit -j RETURN
 iptables -A TOR_RATELIMIT -m recent --set --name tor-recent --mask 255.255.255.255 --rsource
 iptables -A TOR_RATELIMIT -j DROP
@@ -85,7 +85,7 @@ proto tcp dport $DSTPORT syn mod connlimit mod state state NEW connlimit-mask 32
 
 # ratelimit
 proto tcp destination $DSTIP dport $DSTPORT syn mod state state NEW @subchain TOR_RATELIMIT {
-    mod recent name tor-recent seconds 90 update DROP;
+    mod recent name tor-recent seconds 300 update DROP;
     mod hashlimit hashlimit-name tor-hashlimit hashlimit-mode srcip hashlimit 7/sec RETURN;
     mod recent name tor-recent set NOP;
     DROP;

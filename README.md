@@ -81,7 +81,7 @@ Since I use ferm as my firewall frontend tool, this may help you if you are a fe
 @def $SNOWFLAKES_V6 = `curl -s 'https://raw.githubusercontent.com/Enkidu-6/tor-relay-lists/main/snowflake-v6.txt' | sed -e '1,3d'`;
 
 # never limit dirauths or snowflakes
-proto tcp dport $DSTIP destination $NO_TURN source ($AUTHORITIES_V4 $SNOWFLAKES_V4 $AUTHORITIES_V6 $SNOWFLAKES_V6) comment "Tor auths/snowflakes" ACCEPT;
+proto tcp destination $DSTIP dport $DSTPORT source ($AUTHORITIES_V4 $SNOWFLAKES_V4 $AUTHORITIES_V6 $SNOWFLAKES_V6) ACCEPT;
 
 # connlimit
 proto tcp dport $DSTPORT syn mod connlimit mod state state NEW connlimit-mask 32 connlimit-above 4 DROP;

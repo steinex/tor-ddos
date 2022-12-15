@@ -32,14 +32,14 @@ Since we always want to allow directory authorities and snowflakes to be able to
 
 for v4:
 ```
-$ getent ahostsv4 snowflake-01.torproject.net. | awk '{ print $1 }' | sort -u | xargs
-$ curl -s 'https://onionoo.torproject.org/summary?search=flag:authority' -o - | jq -cr '.relays[].a[0]' | sort | xargs
+curl -s 'https://raw.githubusercontent.com/Enkidu-6/tor-relay-lists/main/authorities-v4.txt' | sed -e '1,3d'
+curl -s 'https://raw.githubusercontent.com/Enkidu-6/tor-relay-lists/main/snowflake.txt' | sed -e '1,3d'
 ```
 
 for v6:
 ```
-$ getent ahostsv6 snowflake-01.torproject.net. | awk '{ print $1 }' | sort -u | xargs
-$ curl -s 'https://onionoo.torproject.org/summary?search=flag:authority' -o - | jq -cr '.relays[].a | select(length > 1) | .[1]' | tr -d '][' | sort | xargs
+curl -s 'https://raw.githubusercontent.com/Enkidu-6/tor-relay-lists/main/authorities-v6.txt' | sed -e '1,3d'
+curl -s 'https://raw.githubusercontent.com/Enkidu-6/tor-relay-lists/main/snowflake-v6.txt' | sed -e '1,3d'
 ```
 
 ## The actual rules
@@ -77,8 +77,13 @@ iptables -A TOR_RATELIMIT -j DROP
 ## Rules written in ferm
 Since I use ferm as my firewall frontend tool, this may help you if you are a ferm user aswell. I show only the most relevant parts here and I assume you have other rules like accepting `RELATED/ESTABLISHED` and allowing icmp already in place before this snippet:
 ```
+@def $AUTHORITIES_V4 = `curl -s 'https://raw.githubusercontent.com/Enkidu-6/tor-relay-lists/main/authorities-v4.txt' | sed -e '1,3d'`;
+@def $SNOWFLAKES_V4 = `curl -s 'https://raw.githubusercontent.com/Enkidu-6/tor-relay-lists/main/snowflake.txt' | sed -e '1,3d'`;
+@def $AUTHORITIES_V6 = `curl -s 'https://raw.githubusercontent.com/Enkidu-6/tor-relay-lists/main/authorities-v6.txt' | sed -e '1,3d'`;
+@def $SNOWFLAKES_V6 = `curl -s 'https://raw.githubusercontent.com/Enkidu-6/tor-relay-lists/main/snowflake-v6.txt' | sed -e '1,3d'`;
+
 # never limit dirauths or snowflakes
-proto tcp destination $DSTIP dport $DSTPORT source ($dirauths $snowflakes) ACCEPT;
+proto tcp dport $DSTIP destination $NO_TURN source ($AUTHORITIES_V4 $SNOWFLAKES_V4 $AUTHORITIES_V6 $SNOWFLAKES_V6) comment "Tor auths/snowflakes" ACCEPT;
 
 # connlimit
 proto tcp dport $DSTPORT syn mod connlimit mod state state NEW connlimit-mask 32 connlimit-above 4 DROP;

@@ -52,17 +52,15 @@ iptables -A INPUT -m state --state INVALID -j DROP
 iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 iptables -A INPUT -i lo -j ACCEPT
 iptables -A INPUT -p icmp -j ACCEPT
-iptables -A INPUT -s 128.31.0.34/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
-iptables -A INPUT -s 131.188.40.189/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
-iptables -A INPUT -s 154.35.175.225/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
-iptables -A INPUT -s 171.25.193.9/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
-iptables -A INPUT -s 193.23.244.244/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
-iptables -A INPUT -s 199.58.81.140/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
-iptables -A INPUT -s 204.13.164.118/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
-iptables -A INPUT -s 45.66.33.45/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
-iptables -A INPUT -s 66.111.2.131/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
-iptables -A INPUT -s 86.59.21.38/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
-iptables -A INPUT -s 193.187.88.42/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
+iptables -A INPUT -s 128.31.0.39/32 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
+iptables -A INPUT -s 204.13.164.118 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
+iptables -A INPUT -s 199.58.81.140 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
+iptables -A INPUT -s 193.23.244.244 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
+iptables -A INPUT -s 45.66.33.45 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
+iptables -A INPUT -s 86.59.21.38 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
+iptables -A INPUT -s 66.111.2.131 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
+iptables -A INPUT -s 171.25.193.9 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
+iptables -A INPUT -s 131.188.40.189 -d $DSTIP/32 -p tcp -m tcp --dport $DSTPORT -j ACCEPT
 iptables -A INPUT -p tcp -m tcp --dport $DSTPORT --tcp-flags FIN,SYN,RST,ACK SYN -m connlimit --connlimit-above 4 --connlimit-mask 32 --connlimit-saddr -m state --state NEW -j DROP
 iptables -N TOR_RATELIMIT
 iptables -A INPUT -p tcp -m tcp --dport $DSTPORT --tcp-flags FIN,SYN,RST,ACK SYN -m state --state NEW -j TOR_RATELIMIT

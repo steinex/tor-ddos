@@ -27,6 +27,13 @@ sysctl -w net.core.somaxconn=65536
 
 Make sure you persist these via `/etc/sysctl.conf` or how it's supposed to work on your distribution. You need to restart your tor process to apply these settings.
 
+## Other tweaks
+There are other tweaks with are helpful especially in low-RAM and thrashing situations. First, make sure you enable Zswap:
+`echo 1 > /sys/module/zswap/parameters/enabled`
+`echo y > /sys/kernel/mm/lru_gen/enabled` (this only works on kernels 6.1+ but should make a huge difference).
+
+Again, make sure you persist these settings for your distribution (`rc.local`?)
+
 ## Whitelisting the directory authorities and snowflakes.
 Since we always want to allow directory authorities and snowflakes to be able to talk to our relay we always `ACCEPT` them before attempting to ratelimit. To get the addresses of these you can use the following commands. The addresses should very rarely change, if ever. You see these addresses used beneath in the actual ruleset. (shamelessly stolen from @Enkidu-6.)
 

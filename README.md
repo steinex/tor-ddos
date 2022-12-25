@@ -30,8 +30,8 @@ Make sure you persist these via `/etc/sysctl.conf` or how it's supposed to work 
 ## Other tweaks
 There are other tweaks that are especially helpful in low-RAM and thrashing situations. First, make sure you enable Zswap:
 ```
-echo 1 > /sys/module/zswap/parameters/enabled`
-echo y > /sys/kernel/mm/lru_gen/enabled` (this only works on kernels 6.1+ but should make a huge difference).
+echo 1 > /sys/module/zswap/parameters/enabled
+echo y > /sys/kernel/mm/lru_gen/enabled (this only works on kernels 6.1+ but should make a huge difference).
 ```
 
 Again, make sure you persist these settings for your distribution (`rc.local`?)

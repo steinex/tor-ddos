@@ -12,11 +12,6 @@ Very well in my observations. Before the rules were in place I had many of the i
 
 Since the rules are active, directory authorities are happy again and my relays have their flags back. The infamous log message is gone. Additionally the behaviour of the tor processes are back to pre-DDoS times, both in terms of traffic and on strain on CPU and memory.
 
-## Credits
-* Thanks to the friendly peeps from `#netfilter` on libera for helping me wrap my head around these iptables modules.
-* @toralf has a more sophisticated solution here: https://github.com/toralf/torutils
-* @Enkidu-6 has another approach here: https://github.com/Enkidu-6/tor-ddos
-
 ## sysctl tweaks
 Sometimes the ORPort gets unresponsive despite not hitting it's file descriptor limit nor a full conntrack table or such. The problem is that the floods come in such fast waves sometimes that the Linux kernel can't keep up with its queue to allow for new connections. This is mitigated by setting:
 
@@ -106,5 +101,10 @@ proto tcp destination $DSTIP dport $DSTPORT syn mod state state NEW @subchain TO
 
 ## Why another attempt at this?
 Because I feel it's easier to implement into ones existing firewall workflow and isn't dependent on `ipset` and wrapper scripts. Don't get me wrong though, I don't want to diminish the great work done by both @toralf and @Enkidu-6.
+
+## Credits
+* Thanks to the friendly peeps from `#netfilter` on libera for helping me wrap my head around these iptables modules.
+* @toralf has a more sophisticated solution here: https://github.com/toralf/torutils
+* @Enkidu-6 has another approach here: https://github.com/Enkidu-6/tor-ddos
 
 HTH, and thanks for reading. :-)

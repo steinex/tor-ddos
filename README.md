@@ -22,11 +22,13 @@ sysctl -w net.core.somaxconn=65536
 
 Make sure you persist these via `/etc/sysctl.conf` or how it's supposed to work on your distribution. You need to restart your tor process to apply these settings.
 
-## Other tweaks
-There are other tweaks that are especially helpful in low-RAM and thrashing situations. First, make sure you enable Zswap:
+## Some more tweaks
+There are some more tweaks that are especially helpful in low-RAM and thrashing situations. The first command enables [Zswap](https://en.wikipedia.org/wiki/Zswap). The second command enables [MGLRU](https://lwn.net/Articles/880393/) (but is only available if you run a kernel 6.1+).
+
+However, should MGLRU not be available for your kernel, I recommend enabling zswap anyway.
 ```
 echo 1 > /sys/module/zswap/parameters/enabled
-echo y > /sys/kernel/mm/lru_gen/enabled (this only works on kernels 6.1+ but should make a huge difference).
+echo y > /sys/kernel/mm/lru_gen/enabled (only works on 6.1+).
 ```
 
 Again, make sure you persist these settings for your distribution (`rc.local`?)

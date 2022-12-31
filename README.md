@@ -28,7 +28,7 @@ There are some more tweaks that are especially helpful in low-RAM and thrashing 
 However, should MGLRU not be available for your kernel, I recommend enabling zswap anyway.
 ```
 echo 1 > /sys/module/zswap/parameters/enabled
-echo y > /sys/kernel/mm/lru_gen/enabled (only works on 6.1+).
+echo y > /sys/kernel/mm/lru_gen/enabled
 ```
 
 Again, make sure you persist these settings for your distribution (`rc.local`?)
